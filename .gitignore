@@ -1,0 +1,28 @@
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Dependency directory
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Output of 'npm pack'
+*.tgz
+
+# dotenv environment variable files
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
