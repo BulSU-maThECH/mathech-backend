@@ -39,7 +39,7 @@ maThECH Backend is the server-side component of the maThECH quiz generator websi
 1. Clone the repository:
 
    ```bash
-   git clone git@gitlab.com/bsmcs-4a-thesis/thesis-backend.git
+   git clone https://github.com/BulSU-maThECH/mathech-backend.git
    ```
 
 2. Navigate to the project directory:
@@ -61,7 +61,7 @@ maThECH Backend is the server-side component of the maThECH quiz generator websi
 Create a `.env` file in the root directory and add the following variables:
 
 ```dotenv
-PORT=3000
+PORT=your_desired_port_number
 MONGODB_URL=your_mongodb_connection_url
 MONGODB_COLLECTION=your_mongodb_collection_name
 GOOGLE_GMAIL_CLIENT_USERNAME=your_gmail_username
