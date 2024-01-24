@@ -20,7 +20,7 @@ const otpRoutes = require('./routes/otpRoutes')
  * parse incoming requests with URL-encoded payloads.
  */
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'https://mathech.vercel.app', 'https://mathech-mathech.vercel.app', 'https://mathech-git-master-mathech.vercel.app'],
     methods: 'GET,POST,DELETE,PUT,PATCH',
     allowedHeaders: 'Content-Type,Accept,Authorization,x-requested-with',
     credentials: true,
