@@ -12,6 +12,14 @@ module.exports = mongoose.model('Question', new mongoose.Schema({
         type: String,
         required: [true, 'Question required'],
     },
+    subject: {
+        type: String,
+        required: [true, 'Subject required'],
+    },
+    subTopic: {
+        type: String,
+        required: [true, 'Sub-topic required'],
+    },
     chapter: {
         type: Number,
         required: [true, 'Chapter required'],
