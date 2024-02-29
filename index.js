@@ -3,9 +3,6 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 
-const userRoutes = require('./routes/userRoutes')
-const otpRoutes = require('./routes/otpRoutes')
-
 /**
  * CORS Middleware Configuration:
  * - Sets allowed origins to 'http://localhost:3000' and 'http://127.0.0.1:3000'
@@ -28,8 +25,11 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/user', userRoutes);
-app.use('/otp', otpRoutes);
+app.use('/user',  require('./routes/userRoutes'));
+app.use('/otp', require('./routes/otpRoutes'));
+app.use('/quiz', require('./routes/quizRoutes'));
+app.use('quizSet', require('./routes/quizSetRoutes'));
+app.use('question', require('./routes/questionRoutes'));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running in ${process.env.NODE_ENV} mode at port ${port}`));
