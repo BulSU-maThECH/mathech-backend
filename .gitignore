@@ -1,28 +1,39 @@
-# Node.js
+# Ignore node_modules directory
 node_modules/
 
-# Logs
-logs
-*.log
-npm-debug.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-
-# Dependency directory
-lib-cov
-
-# Coverage directory used by tools like istanbul
-coverage
-
-# Output of 'npm pack'
-*.tgz
-
-# dotenv environment variable files
+# Ignore environment configuration files
 .env
 
-# OS-specific files
+# Ignore files generated during runtime
+*.log
+*.pid
+*.lock
+
+# Ignore user-specific IDE and editor settings
+.vscode/
+.idea/
+
+# Ignore build files and directories
+/build/
+/dist/
+
+# Ignore dependencies and runtime folder
+bower_components/
+public/
+
+# Ignore sensitive or dynamically generated files
+*.pem
+*.key
+
+# Ignore files created by testing frameworks
+coverage/
+
+# Ignore any backup files
+*.bak
+
+# Ignore system files and folders
 .DS_Store
 Thumbs.db
+
+# Ignore npm package-lock files
+package-lock.json
