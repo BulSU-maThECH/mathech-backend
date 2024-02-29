@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Powerful backend API serving as the backbone for maThECH quiz generator website. Handles API requests, seamlessly integrate with the frontend. Provides a robust platform to support the quiz generation features and user authentication.",
   "main": "index.js",
+  "scripts" : {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/BulSU-maThECH/mathech-backend.git"
