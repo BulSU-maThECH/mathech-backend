@@ -1,12 +1,5 @@
-const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
-/**
- * TODO: Write up the Question Schema as indicated in our ERD. Write the documentation here.
- * TODO: Write up `@param {DataType} ParamName - Description`
- * 
- * @model Question
- */
 module.exports = mongoose.model('Question', new mongoose.Schema({
     question: {
         type: String,

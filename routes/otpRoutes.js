@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const otpController = require('../controllers/otpController');
+const { sendOtp } = require('../controllers/otpController');
 
-router.post('/send', (req, res) => {
-    otpController.sendOtp(req.body).then(resultFromController => res.send(resultFromController));
-});
+router.route('/send').post(sendOtp);
 
 module.exports = router;

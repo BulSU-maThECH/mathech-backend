@@ -1,11 +1,5 @@
 const mongoose = require('mongoose');
 
-/**
- * TODO: Write up the QuizSet Schema as indicated in our ERD. Write the documentation here.
- * TODO: Write up `@param {DataType} ParamName - Description`
- * 
- * @model QuizSet
- */
 module.exports = mongoose.model('QuizSet', new mongoose.Schema({
     instruction: {
         type: String,
