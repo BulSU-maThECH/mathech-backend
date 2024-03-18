@@ -1,9 +1,9 @@
 {
   "name": "mathech-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Powerful backend API serving as the backbone for maThECH quiz generator website. Handles API requests, seamlessly integrate with the frontend. Provides a robust platform to support the quiz generation features and user authentication.",
   "main": "index.js",
-  "scripts" : {
+  "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
@@ -31,6 +31,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "express-useragent": "^1.0.15",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.3",

@@ -1,11 +1,5 @@
 const nodemailer = require('nodemailer');
-require('dotenv').config();
 
-/**
- * The `transporter` is an instance of Nodemailer's transport object, configured to send emails using
- * the Gmail service. It is created with the provided Gmail client username and password stored in
- * environment variables.
- */
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
