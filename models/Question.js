@@ -17,10 +17,6 @@ module.exports = mongoose.model('Question', new mongoose.Schema({
         type: Number,
         required: [true, 'Chapter required'],
     },
-    difficulty: {
-        type: String,
-        required: [true, 'Difficulty required'],
-    },
     questionType: {
         type: String,
         required: [true, 'Question type required'],
