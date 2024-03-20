@@ -7,7 +7,7 @@ router.route('/create').post(verifyToken, CreateQuestion);
 
 router.route('/getSubjects').get(GetSubjects);
 
-router.route('/getSubtopics').get(GetSubtopics);
+router.route('/getSubtopics').post(GetSubtopics);
 
 router.route('/:id')
 .get(ViewQuestion)
