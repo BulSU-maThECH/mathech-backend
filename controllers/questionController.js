@@ -43,7 +43,7 @@ const GetSubjects = expressAsyncHandler(async (req, res) => {
     
     const subjects = await questionCollection.aggregate([
         {$group: {_id: "$subject"}},
-        {$project: {_id: 0, subject: "$_id"}},
+        {$project: {subject: "$_id"}},
         {$sort: {subject: 1}}
     ]).toArray();
     if (subjects.length === 0) {
