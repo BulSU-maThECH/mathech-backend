@@ -74,7 +74,7 @@ const GetSubtopics= expressAsyncHandler(async (req, res) => {
     const subTopicList = await questionCollection.aggregate([
         {$match: {subject: subject}},
         {$group: {_id: "$subTopic"}},
-        {$project: {_id: 0, subTopic: "$_id"}},
+        {$project: {subTopic: "$_id"}},
         {$sort: {subTopic: 1}}
     ]).toArray();
 
