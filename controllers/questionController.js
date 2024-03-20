@@ -57,7 +57,7 @@ const GetSubjects = expressAsyncHandler(async (req, res) => {
 });
 
 const GetSubtopics= expressAsyncHandler(async (req, res) => {
-    const { subject } = req.body;
+    const { subject, chapter } = req.body;
 
     await connectToDatabase();
     const client = getClient();
@@ -72,7 +72,7 @@ const GetSubtopics= expressAsyncHandler(async (req, res) => {
     }
 
     const subTopicList = await questionCollection.aggregate([
-        {$match: {subject: subject}},
+        {$match: {subject: subject, chapter: chapter}},
         {$group: {_id: "$subTopic"}},
         {$project: {subTopic: "$_id"}},
         {$sort: {subTopic: 1}}
