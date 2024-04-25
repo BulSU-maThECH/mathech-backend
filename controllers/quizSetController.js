@@ -1,22 +1,30 @@
 const expressAsyncHandler = require('express-async-handler');
 const QuizSet = require('../models/QuizSet');
-const Question = require('../models/Question');
+const Quiz = require('../models/Quiz');
 const auth = require('../middleware/Authentication');
 const { connectToDatabase, disconnectToDatabase, getClient } = require('../config/database');
 const { ObjectId } = require('mongodb');
 
 const CreateSet = expressAsyncHandler(async (req, res) => {
-    const { subject, subTopics, items } = req.body;
+    const { quizType, instructions, subject, subTopics, chapters, items, points,  } = req.body;
+    const testId = req.params.id;
+    let userId = req.headers.authorization;
+    userId = await auth.decodeToken(userId);
+    userId = new ObjectId(userId._id);
     
     await connectToDatabase();
     const client = getClient();
     const db = client.db(process.env.MONGODB_COLLECTION);
     const questionCollection = db.collection('questions');
+    const quizSetCollection = db.collection('quiz_set');
+    const quizCollection = db.collection('quiz');
 
     const questions = await questionCollection.aggregate([
         {$match: {
             subject: subject,
-            subTopic: {$in: subTopics}
+            chapter: {$in: chapters},
+            subTopic: {$in: subTopics},
+            questionType: quizType
         }}
     ]).toArray();
 
@@ -27,10 +35,72 @@ const CreateSet = expressAsyncHandler(async (req, res) => {
 
     const selectedQuestions = questions.slice(0, items);
 
+    if (!testId) {
+        const newQuizSet = new QuizSet({
+            setType: quizType,
+            instruction: instructions,
+            subject: subject,
+            subTopic: subTopics,
+            chapters: chapters,
+            points: points,
+            questions: selectedQuestions,
+            createdBy: userId
+        });
+
+        generatedQuizSet = await quizSetCollection.insertOne(newQuizSet);
+
+        generatedQuizSetId = generatedQuizSet.insertedId.toString();
+
+        const newQuiz = new Quiz({
+            title: subject,
+            quizSet: [generatedQuizSetId],
+            createdBy: userId
+        });
+
+        await quizCollection.insertOne(newQuiz);
+    }
+    else {
+        const newQuizSet = new QuizSet({
+            setType: quizType,
+            instruction: instructions,
+            subject: subject,
+            subTopic: subTopics,
+            chapters: chapters,
+            points: points,
+            questions: selectedQuestions,
+            createdBy: userId
+        });
+
+        generatedQuizSet = await quizSetCollection.insertOne(newQuizSet);
+
+        await quizCollection.updateOne(
+            {_id: new ObjectId(testId)},
+            {$push: { quizSet: new ObjectId(generatedQuizSet.insertedId.toString())}}
+        );
+    }
+
     await disconnectToDatabase();
     res.status(200).send(selectedQuestions);
 });
 
+const GetQuizSet = expressAsyncHandler(async (req, res) => {
+    const setId = new ObjectId(req.params.id);
+
+    await connectToDatabase();
+    const client = getClient();
+    const db = client.db(process.env.MONGODB_COLLECTION);
+    const quizSetCollection = db.collection('quiz_set');
+    const filter = {_id: setId};
+
+    const quizSetData = await quizSetCollection.findOne(filter);
+
+    await disconnectToDatabase();
+    res.status(200).send(quizSetData);
+});
+
+const x = expressAsyncHandler(async (req, res) => {});
+
 module.exports = {
-    CreateSet
+    CreateSet,
+    GetQuizSet
 };

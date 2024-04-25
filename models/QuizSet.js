@@ -1,13 +1,33 @@
 const mongoose = require('mongoose');
 
 module.exports = mongoose.model('QuizSet', new mongoose.Schema({
+    setType: {
+        type: String,
+        required: [true, 'Test type required'],
+    },
     instruction: {
         type: String,
         required: [true, 'Instruction required'],
     },
-    setType: {
+    subject: {
         type: String,
-        required: [true, 'Test type required'],
+        required: [true, 'Subject required'],
+    },
+    subTopic: [
+        {
+            type: String,
+            required: [true, 'Subtopic required'],
+        },
+    ],
+    chapters: [
+        {
+            type: Number,
+            required: [true, 'Chapter required'],
+        }
+    ],
+    points: {
+        type: Number,
+        required: [true, 'Points per item required'],
     },
     questions: [
         {

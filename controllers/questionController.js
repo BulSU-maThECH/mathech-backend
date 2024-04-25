@@ -57,7 +57,7 @@ const GetSubjects = expressAsyncHandler(async (req, res) => {
 });
 
 const GetSubtopics= expressAsyncHandler(async (req, res) => {
-    const { subject, chapter } = req.body;
+    const { subject, chapters } = req.body;
 
     await connectToDatabase();
     const client = getClient();
@@ -72,7 +72,7 @@ const GetSubtopics= expressAsyncHandler(async (req, res) => {
     }
 
     const subTopicList = await questionCollection.aggregate([
-        {$match: {subject: subject, chapter: chapter}},
+        {$match: {subject: subject, chapter: {$in: chapters}}},
         {$group: {_id: "$subTopic"}},
         {$project: {subTopic: "$_id"}},
         {$sort: {subTopic: 1}}
@@ -80,6 +80,21 @@ const GetSubtopics= expressAsyncHandler(async (req, res) => {
 
     await disconnectToDatabase();
     res.status(200).send(subTopicList.map(topic => topic.subTopic));
+});
+
+const GetQuestions = expressAsyncHandler(async (req, res) => {
+    const { questions } = req.body;
+    const questionIds = questions.map(id => new ObjectId(id));
+
+    await connectToDatabase();
+    const client = getClient();
+    const db = client.db(process.env.MONGODB_COLLECTION);
+    const questionCollection = db.collection('questions');
+    
+    const questionList = await questionCollection.find({_id: {$in: questionIds}}).toArray();
+
+    await disconnectToDatabase();
+    res.status(200).send(questionList);
 });
 
 const EditQuestion = expressAsyncHandler(async (req, res) => {});
@@ -91,6 +106,7 @@ module.exports = {
     ViewQuestion,
     GetSubjects,
     GetSubtopics,
+    GetQuestions,
     EditQuestion,
     DeleteQuestion
 };

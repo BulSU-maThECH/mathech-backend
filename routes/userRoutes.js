@@ -9,8 +9,9 @@ router.route('/signup').post(RegisterUser);
 
 router.route('/login').post(LoginUser);
 
+router.route('/details').get(UserDetails);
+
 router.route('/:id')
-    .get(UserDetails)
     .patch(verifyToken, EditUser)
     .delete(verifyToken, DeleteUser);
 
