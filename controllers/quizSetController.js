@@ -35,6 +35,8 @@ const CreateSet = expressAsyncHandler(async (req, res) => {
 
     const selectedQuestions = questions.slice(0, items);
 
+    let output;
+
     if (!testId) {
         const newQuizSet = new QuizSet({
             setType: quizType,
@@ -57,7 +59,12 @@ const CreateSet = expressAsyncHandler(async (req, res) => {
             createdBy: userId
         });
 
-        await quizCollection.insertOne(newQuiz);
+        const quizId = await quizCollection.insertOne(newQuiz);
+
+        output = {
+            generatedId: quizId.insertedId.toString(),
+            questions: selectedQuestions
+        };
     }
     else {
         const newQuizSet = new QuizSet({
@@ -77,10 +84,12 @@ const CreateSet = expressAsyncHandler(async (req, res) => {
             {_id: new ObjectId(testId)},
             {$push: { quizSet: new ObjectId(generatedQuizSet.insertedId.toString())}}
         );
+        
+        output = {questions: selectedQuestions};
     }
 
     await disconnectToDatabase();
-    res.status(200).send(selectedQuestions);
+    res.status(200).send(output);
 });
 
 const GetQuizSet = expressAsyncHandler(async (req, res) => {
