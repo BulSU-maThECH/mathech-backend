@@ -64,7 +64,7 @@ const GetSubtopics= expressAsyncHandler(async (req, res) => {
     const db = client.db(process.env.MONGODB_COLLECTION);
     const questionCollection = db.collection('questions');
     
-    const isSubjectExist = await questionCollection.findOne({subject: subject});
+    const isSubjectExist = await questionCollection.findOne({subject: {$regex: new RegExp(subject, 'i')}});
     if (!isSubjectExist) {
         await disconnectToDatabase();
         res.status(404);
@@ -72,7 +72,7 @@ const GetSubtopics= expressAsyncHandler(async (req, res) => {
     }
 
     const subTopicList = await questionCollection.aggregate([
-        {$match: {subject: subject, chapter: {$in: chapters}}},
+        {$match: {subject: {$regex: new RegExp(subject, 'i')}, chapter: {$in: chapters}}},
         {$group: {_id: "$subTopic"}},
         {$project: {subTopic: "$_id"}},
         {$sort: {subTopic: 1}}
