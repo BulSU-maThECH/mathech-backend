@@ -1,9 +1,9 @@
-const asyncHandler = require('express-async-handler');
+const expressAsyncHandler = require('express-async-handler');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 let client;
 
-const connectToDatabase = asyncHandler(async () => {
+const connectToDatabase = expressAsyncHandler(async () => {
     const mongoOptions = {
         serverApi: {
             version: ServerApiVersion.v1,
@@ -15,7 +15,7 @@ const connectToDatabase = asyncHandler(async () => {
     client = await MongoClient.connect(process.env.MONGODB_URL, mongoOptions);
 });
 
-const disconnectToDatabase = asyncHandler(async () => {
+const disconnectToDatabase = expressAsyncHandler(async () => {
     await client.close();
 });
 
