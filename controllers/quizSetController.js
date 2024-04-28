@@ -21,9 +21,9 @@ const CreateSet = expressAsyncHandler(async (req, res) => {
 
     const questions = await questionCollection.aggregate([
         {$match: {
-            subject: subject,
+            subject: {$regex: new RegExp(subject, 'i')},
             chapter: {$in: chapters},
-            subTopic: {$in: subTopics},
+            subTopic: {$in: subTopics.map(topic => new RegExp(topic, 'i'))},
             questionType: quizType
         }}
     ]).toArray();
