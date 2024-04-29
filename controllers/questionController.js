@@ -1,8 +1,10 @@
 const expressAsyncHandler = require('express-async-handler');
 const Question = require('../models/Question');
+const QuizSet = require('../models/QuizSet');
 const auth = require('../middleware/Authentication');
 const { connectToDatabase, disconnectToDatabase, getClient } = require('../config/database');
 const { ObjectId } = require('mongodb');
+const { disconnect } = require('mongoose');
 
 const CreateQuestion = expressAsyncHandler(async (req, res) => {
     const newQuestionData = req.body;
@@ -32,8 +34,6 @@ const CreateQuestion = expressAsyncHandler(async (req, res) => {
     await disconnectToDatabase();
     res.status(201).send({message: 'Questions successfully created!'});
 });
-
-const ViewQuestion = expressAsyncHandler(async (req, res) => {});
 
 const GetSubjects = expressAsyncHandler(async (req, res) => {
     await connectToDatabase();
@@ -97,13 +97,73 @@ const GetQuestions = expressAsyncHandler(async (req, res) => {
     res.status(200).send(questionList);
 });
 
-const EditQuestion = expressAsyncHandler(async (req, res) => {});
+const EditQuestion = expressAsyncHandler(async (req, res) => {
+    const quizSetId = new ObjectId(req.params.id);
+    const questionId = req.body.questionId;
+    const newQuestion = req.body.newQuestion;
 
-const DeleteQuestion = expressAsyncHandler(async (req, res) => {});
+    await connectToDatabase();
+    const client = getClient();
+    const db = client.db(process.env.MONGODB_COLLECTION);
+    const quizSetCollection = db.collection('quiz_set');
+    const filter = {_id: quizSetId};
+
+    const quizSet = await quizSetCollection.findOne(filter);
+    if (!quizSet) {
+        await disconnectToDatabase();
+        res.status(404);
+        throw new Error('Quiz set does not exist!');
+    }
+
+    const questionIndex = await quizSet.questions.findIndex(question => question._id.toString() === questionId);
+    if (questionIndex === -1) {
+        await disconnectToDatabase();
+        res.status(404);
+        throw new Error('Question does not exist!');
+    }
+
+    quizSet.questions[questionIndex].question = newQuestion
+
+    await quizSetCollection.updateOne(filter, {$set: {questions: quizSet.questions}});
+
+    await disconnectToDatabase();
+    res.status(200).end();
+});
+
+const DeleteQuestion = expressAsyncHandler(async (req, res) => {
+    const quizSetId = new ObjectId(req.params.id);
+    const questionId = req.body.questionId;
+
+    await connectToDatabase();
+    const client = getClient();
+    const db = client.db(process.env.MONGODB_COLLECTION);
+    const quizSetCollection = db.collection('quiz_set');
+    const filter = {_id: quizSetId};
+
+    const quizSet = await quizSetCollection.findOne(filter);
+    if (!quizSet) {
+        await disconnectToDatabase();
+        res.status(404);
+        throw new Error('Quiz set does not exists!');
+    }
+
+    const question = quizSet.questions.findIndex(question => question._id.toString() === questionId);
+    if (question === -1) {
+        await disconnectToDatabase();
+        res.status(404);
+        throw new Error('Question does not exist in the quiz set!');
+    }
+
+    quizSet.questions.splice(question, 1);
+
+    await quizSetCollection.updateOne(filter, {$set: {questions: quizSet.questions}});
+
+    await disconnectToDatabase();
+    res.status(204).end();
+});
 
 module.exports = {
     CreateQuestion,
-    ViewQuestion,
     GetSubjects,
     GetSubtopics,
     GetQuestions,

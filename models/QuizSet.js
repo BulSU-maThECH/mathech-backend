@@ -31,9 +31,18 @@ module.exports = mongoose.model('QuizSet', new mongoose.Schema({
     },
     questions: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            required: [true, 'Question ID required'],
-            ref: "Question",
+            question: {
+                type: String,
+                required: [true, 'Question required'],
+            },
+            options: [
+                {
+                    type: String,
+                }
+            ],
+            answer: {
+                type: String,
+            },
         },
     ],
     createdBy: {

@@ -33,7 +33,12 @@ const CreateSet = expressAsyncHandler(async (req, res) => {
         [questions[i], questions[j]] = [questions[j], questions[i]];
     }
 
-    const selectedQuestions = questions.slice(0, items);
+    let selectedQuestions = questions.slice(0, items);
+    selectedQuestions = selectedQuestions.map(question => ({
+        question: question.question,
+        options: question.options,
+        answer: question.answer
+    }));
 
     let output;
 
@@ -102,14 +107,59 @@ const GetQuizSet = expressAsyncHandler(async (req, res) => {
     const filter = {_id: setId};
 
     const quizSetData = await quizSetCollection.findOne(filter);
+    if (!quizSetData) {
+        await disconnectToDatabase();
+        res.status(404);
+        throw new Error('Quiz set does not exist!');
+    }
 
     await disconnectToDatabase();
     res.status(200).send(quizSetData);
+});
+
+const DeleteQuizSet = expressAsyncHandler(async (req, res) => {
+    const quizId = new ObjectId(req.params.id);
+    const { setId } = req.body;
+
+    await connectToDatabase();
+    const client = getClient();
+    const db = client.db(process.env.MONGODB_COLLECTION);
+    const quizSetCollection = db.collection('quiz_set');
+    const quizCollection = db.collection('quiz');
+    const filter = {_id: quizId};
+
+    const quizDetails = await quizCollection.findOne(filter);
+    if (!quizDetails) {
+        await disconnectToDatabase();
+        res.status(404);
+        throw new Error('Quiz does not exist!');
+    }
+
+    const setIndex = quizDetails.quizSet.findIndex(quizSet => quizSet.toString() === setId);
+    if (setIndex === -1) {
+        await disconnectToDatabase();
+        res.status(404);
+        throw new Error('Quiz set does not exist!');
+    }
+
+    quizDetails.quizSet.splice(setIndex, 1);
+    await quizSetCollection.deleteOne({_id: new ObjectId(setId)});
+
+    if (quizDetails.quizSet.length === 0) {
+        await quizCollection.deleteOne(filter);
+    }
+    else {
+        await quizCollection.updateOne(filter, {$set: {quizSet: quizDetails.quizSet}});
+    }
+
+    await disconnectToDatabase();
+    res.status(204).end();
 });
 
 const x = expressAsyncHandler(async (req, res) => {});
 
 module.exports = {
     CreateSet,
-    GetQuizSet
+    GetQuizSet,
+    DeleteQuizSet
 };
